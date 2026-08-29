@@ -102,7 +102,7 @@ export default function VastuReport({ layout, roadFacing = "North" }: VastuRepor
                     </span>
                   </div>
                   <p className={`text-[11px] leading-snug mt-0.5 ${s.text}`}>
-                    {item.note}
+                    {item.message}
                   </p>
                 </div>
               </div>
