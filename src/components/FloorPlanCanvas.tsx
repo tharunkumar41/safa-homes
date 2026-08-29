@@ -2260,17 +2260,7 @@ const gc = gateCenter();
         </button>
       </div>
 
-      {/* Warnings banner hidden per product preference */}
-      {false && layout.warnings && layout.warnings.length > 0 && (
-        <div className="bg-[var(--paper-soft)] border-y border-[var(--pencil-red)]/40 px-5 py-2 shrink-0 text-xs text-[var(--accent-amber)] font-medium">
-          {layout.warnings.map((warn, i) => (
-            <div key={i} className="flex items-start gap-1.5 leading-relaxed">
-              <span className="shrink-0 font-bold">⚠ Warning:</span>
-              <span>{warn}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      
 
 
 
