@@ -9,13 +9,15 @@ import { PlotInputs, FloorPlan } from "./types";
 /** @deprecated Use generateFromTemplate via /api/generate */
 export function generateLocalLayout(_inputs: PlotInputs): FloorPlan {
   return {
+    floor: 0,
     plotLength: 30,
     plotBreadth: 40,
     rooms: [],
     doors: [],
     windows: [],
+    staircase: { x: 0, y: 0, width: 0, height: 0 },
     explanation: "Use /api/generate (template system). This stub is only for compile compatibility.",
-  } as FloorPlan;
+  };
 }
 
 export function generateLocalUpperFloorLayout(
