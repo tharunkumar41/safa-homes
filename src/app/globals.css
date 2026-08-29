@@ -1,0 +1,285 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   DESIGN TOKENS – Light default (maket style with blue accent)
+   ============================================================ */
+:root {
+  /* Background – very light warm white */
+  --bg: #fafaf8;
+  --bg-grid: rgba(0, 0, 0, 0.02);
+  --bg-grid-strong: rgba(0, 0, 0, 0.05);
+
+  /* Surfaces – transparent */
+  --surface: rgba(255, 255, 255, 0.5);
+  --surface-solid: #ffffff;
+  --surface-2: rgba(0, 0, 0, 0.03);
+
+  /* Borders */
+  --border: rgba(0, 0, 0, 0.06);
+  --border-strong: rgba(0, 0, 0, 0.10);
+
+  /* Text */
+  --text: #000000;
+  --text-muted: #605f5f;
+
+  /* PRIMARY ACCENT – BLUE */
+  --accent: #2b6cb0;
+  --accent-soft: rgba(43, 108, 176, 0.12);
+  --accent-2: #1a4f8b;
+  --accent-2-soft: rgba(26, 79, 139, 0.10);
+  --accent-contrast: #ffffff;
+
+  --shadow-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Dark mode (optional – you can remove if not used) */
+.dark {
+  --bg: #0a0a0a;
+  --bg-grid: rgba(255, 255, 255, 0.03);
+  --bg-grid-strong: rgba(255, 255, 255, 0.06);
+  --surface: rgba(255, 255, 255, 0.08);
+  --surface-solid: #1a1a1a;
+  --surface-2: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #ffffff;
+  --text-muted: #9a9a9a;
+  --accent: #6b9fd4;
+  --accent-soft: rgba(107, 159, 212, 0.15);
+  --accent-2: #4a8bc0;
+  --accent-2-soft: rgba(74, 139, 192, 0.12);
+  --accent-contrast: #0a0a0a;
+  --shadow-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Fonts */
+.font-display {
+  font-family: var(--font-display, 'Inter', sans-serif);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+.font-technical {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+h1, h2, h3, h4, .heading {
+  font-family: var(--font-display), sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* ===== UI PRIMITIVES ===== */
+.glass-panel {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px var(--shadow-color);
+}
+
+.glass-card {
+  background: var(--surface);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 4px 16px var(--shadow-color);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border: none;
+  border-radius: 9999px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: opacity 0.2s, filter 0.2s;
+}
+.btn-primary:hover {
+  opacity: 0.85;
+  filter: brightness(1.1);
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(var(--bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ===== DIMENSION BRACKET – now uses blue accent ===== */
+.dim-bracket {
+  position: relative;
+  padding: 0 1.1rem;
+  color: var(--accent); /* blue text */
+}
+.dim-bracket::before,
+.dim-bracket::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 0.9em;
+  background: var(--accent); /* blue lines */
+  transform: translateY(-50%);
+}
+.dim-bracket::before { left: 0; }
+.dim-bracket::after { right: 0; }
+
+/* ===== UTILITY ===== */
+.text-accent {
+  color: var(--accent);
+}
+
+/* ===== KEYFRAMES (keep your existing animations) ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+}
+.reveal.is-visible {
+  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+/* ===== MISC ===== */
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+* {
+  scrollbar-color: var(--border-strong) transparent;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none !important; opacity: 1 !important; transform: none !important; }
+}
+
+/* Optional smooth transitions */
+* {
+  transition: background-color 0.4s ease, color 0.3s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* ===== CURSOR ===== */
+/* Show a pointer/hand cursor on every interactive element. Buttons don't
+   get this from the browser by default (only links do), so a lot of
+   clickable controls were showing the plain arrow on hover. */
+button,
+[role="button"],
+a,
+label,
+select,
+summary,
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+button:disabled,
+[role="button"][aria-disabled="true"],
+select:disabled,
+input:disabled {
+  cursor: not-allowed;
+}
+
+/* === New generator styles === */
+:root {
+  --bp-navy: #f4f5f7;
+  --bp-navy-deep: #e8eaed;
+  --bp-navy-panel: #ffffff;
+  --bp-line: rgba(0, 0, 0, 0.06);
+  --bp-cyan: #2563eb;
+  --paper: #ffffff;
+  --paper-soft: #f8f9fb;
+  --ink: #1a1a1a;
+  --ink-soft: #6b7280;
+  --hairline: #e5e7eb;
+  --pencil-red: #2563eb;
+  --pencil-red-deep: #1d4ed8;
+  --accent-cyan: #2563eb;
+  --accent-pink: #4b5563;
+  --accent-amber: #d97706;
+  --accent-green: #059669;
+  --accent-blue: #2563eb;
+  --card: #ffffff;
+  --border: #e5e7eb;
+}
+
+.blueprint-corners {
+  position: relative;
+}
+.blueprint-corners::before,
+.blueprint-corners::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  z-index: 5;
+}
+.blueprint-corners::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid #9ca3af;
+  border-left: 2px solid #9ca3af;
+}
+.blueprint-corners::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid #9ca3af;
+  border-right: 2px solid #9ca3af;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.glow-panel {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--hairline);
+}
+
+.gradient-accent-text {
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  color: var(--ink);
+}

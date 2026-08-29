@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  name          String?
+  image         String?
+  phone         String?
+  role          String? // 'architect' or 'civil-engineer'
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions Session[]
+  accounts Account[]
+  projects Project[]
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  clientName  String?
+  siteLength  Float
+  siteBreadth Float
+  siteFacing  String // North, South, East, West
+  // Store all generator inputs as JSON
+  inputs      Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Enquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  firmName  String?
+  reason    String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+// Required by NextAuth Prisma adapter (OAuth / email flows)
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Server-side ledger for anonymous "try before you sign up" credits.
+// Keyed by an httpOnly cookie id (see src/lib/guestCredits.ts) so the
+// balance can't be reset or edited from the browser.
+model GuestCredit {
+  id        String   @id // random id stored in the sh_gid cookie
+  credits   Int      @default(20)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Fixed-window rate limiting for public, unauthenticated endpoints
+// (signup, signin, enquiry). Keyed by "<route>:<ip>" — see
+// src/lib/rateLimit.ts.
+model RateLimit {
+  key         String   @id
+  count       Int      @default(0)
+  windowStart DateTime @default(now())
+}
+
+// Holds signup details until the person proves they own the email via
+// OTP. The real User row is only created on successful verification —
+// deliberately, so an attacker can never get an unverified account
+// into the User table under someone else's email (which is what made
+// allowDangerousEmailAccountLinking unsafe before).
+model PendingSignup {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  phone        String?
+  role         String?
+  otpHash      String
+  otpExpiresAt DateTime
+  attempts     Int      @default(0)
+  createdAt    DateTime @default(now())
+}
