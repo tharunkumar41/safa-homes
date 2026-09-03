@@ -109,17 +109,18 @@ export default function Header() {
             <>
               <Link
                 href="/signin"
-                className="text-sm font-medium hover:opacity-70 transition"
+                className="hidden sm:inline text-sm font-medium hover:opacity-70 transition"
                 style={{ color: 'var(--text-muted)' }}
               >
                 Sign in
               </Link>
               <Link
                 href="/generator"
-                className="text-white text-sm font-bold px-5 py-2.5 rounded-full shadow-lg transition-all hover:opacity-90"
+                className="text-white text-xs sm:text-sm font-bold px-3 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-lg transition-all hover:opacity-90 whitespace-nowrap"
                 style={{ background: 'var(--accent)' }}
               >
-                Get started for free
+                <span className="sm:hidden">Start</span>
+                <span className="hidden sm:inline">Get started for free</span>
               </Link>
             </>
           )}
@@ -147,6 +148,9 @@ export default function Header() {
             <Link href="/products" onClick={() => setMobileMenu(false)}>Products</Link>
             <Link href="/blog" onClick={() => setMobileMenu(false)}>Blog</Link>
             <Link href="/enquiry" onClick={() => setMobileMenu(false)}>Enquiry</Link>
+            {!session && (
+              <Link href="/signin" onClick={() => setMobileMenu(false)}>Sign in</Link>
+            )}
             {session && (
               <>
                 <Link href="/dashboard" onClick={() => setMobileMenu(false)}>Dashboard</Link>

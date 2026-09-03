@@ -868,11 +868,48 @@ function applyOptionalRooms(
     bhk: BhkLevel;
     wantPooja: boolean;
     wantServant: boolean;
+    roadFacing: Cardinal;
   }
 ): { rooms: ScaledRoom[]; notes: string[] } {
   const rooms = roomsIn.map((r) => ({ ...r }));
   const notes: string[] = [];
   const area = opts.plotArea;
+
+  // East-facing 6BHK: keep the living room at the bottom/east side.
+  // Place optional Pooja and Store in the upper/east portion instead of
+  // carving them from the bottom living room.
+  if (opts.roadFacing === "East" && opts.bhk === 6 && opts.wantPooja) {
+    const donorIdx = rooms.findIndex((r) => r.id === "bedroom-4");
+    if (donorIdx >= 0 && !rooms.some((r) => r.id === "pooja")) {
+      const donor = rooms[donorIdx];
+      const pw = 5;
+      const ph = 5;
+      if (donor.width >= pw + 4 && donor.height >= ph + 4) {
+        const stripX = donor.x + donor.width - pw;
+        rooms[donorIdx] = { ...donor, width: donor.width - pw };
+        rooms.push({
+          id: "pooja",
+          label: "Pooja Room",
+          x: stripX,
+          y: donor.y,
+          width: pw,
+          height: ph,
+        });
+        const remainH = donor.height - ph;
+        if (remainH >= 4) {
+          rooms.push({
+            id: "store",
+            label: "Store",
+            x: stripX,
+            y: donor.y + ph,
+            width: pw,
+            height: remainH,
+          });
+        }
+        notes.push("East 6BHK: Pooja and Store placed in the upper-east zone; Living remains at the bottom");
+      }
+    }
+  }
 
   // --- Separate pooja (PDF: niche <~1100, separate room from ~1350 / 3BHK+) ---
   // Vastu: Pooja MUST be in NE / N / E as a COMPACT rectangle (never a thin strip).
@@ -1115,6 +1152,11 @@ export function generateFromTemplate(input: GenerateInput) {
     wantServant,
   } = input;
 
+  if (!Number.isFinite(W) || !Number.isFinite(H) || W < 10 || H < 10) {
+    throw new Error(`Invalid plot size: ${W} x ${H} ft`);
+  }
+  const plotAreaForBathDefault = W * H;
+
   // Bathroom rules (matches the essential-rooms chart):
   //  1BHK → exactly 1 bathroom.
   //  2BHK → 1–2, 3BHK → 2–3, 4BHK → 3–4, 5BHK → 4–5, 6BHK → 5–6.
@@ -1125,16 +1167,20 @@ export function generateFromTemplate(input: GenerateInput) {
     1,
     Math.min(bhk, Math.round(Number(input.masterBedrooms) || 1))
   );
-  // PDF: 1BHK→1, 2BHK→2, 3BHK→2–3, etc.
-  const defaultBathrooms = bhk === 1 ? 1 : bhk === 2 ? 2 : Math.max(2, bhk - 1);
+  // PDF: 1BHK→1, 2BHK→2, 3BHK→2 (30x45, <1600 sqft) or 3 (30x55/40x50,
+  // ≥1600 sqft, matches PDF's "2 attached + 1 common"), 4BHK+→bhk-1.
+  const defaultBathrooms =
+    bhk === 1
+      ? 1
+      : bhk === 2
+      ? 2
+      : bhk === 3
+      ? (plotAreaForBathDefault >= 1600 ? 3 : 2)
+      : Math.max(2, bhk - 1);
   const bathroomsRequested = Math.max(
     1,
     Math.round(Number(input.bathrooms) || defaultBathrooms)
   );
-
-  if (!Number.isFinite(W) || !Number.isFinite(H) || W < 10 || H < 10) {
-    throw new Error(`Invalid plot size: ${W} x ${H} ft`);
-  }
 
   const sb = resolveSetbacks(roadFacing, {
     front: input.setbackFront,
@@ -1205,6 +1251,7 @@ export function generateFromTemplate(input: GenerateInput) {
     bhk,
     wantPooja: !!wantPooja,
     wantServant: autoServant,
+    roadFacing,
   });
   rooms = optional.rooms;
 

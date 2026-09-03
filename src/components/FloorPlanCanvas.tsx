@@ -2260,7 +2260,17 @@ const gc = gateCenter();
         </button>
       </div>
 
-      
+      {/* Warnings banner hidden per product preference */}
+      {/* {false && layout.warnings && layout.warnings.length > 0 && (
+        <div className="bg-[var(--paper-soft)] border-y border-[var(--pencil-red)]/40 px-5 py-2 shrink-0 text-xs text-[var(--accent-amber)] font-medium">
+          {layout.warnings.map((warn, i) => (
+            <div key={i} className="flex items-start gap-1.5 leading-relaxed">
+              <span className="shrink-0 font-bold">⚠ Warning:</span>
+              <span>{warn}</span>
+            </div>
+          ))}
+        </div>
+      )} */}
 
 
 
@@ -2268,9 +2278,9 @@ const gc = gateCenter();
       {isFullscreen && (
         <div className="fixed inset-0 z-50 bg-[#161819] flex flex-col animate-fade-in text-stone-350 select-none">
           {/* Modal Header */}
-          <div className="flex justify-between items-center bg-[#202224] border-b border-stone-800 px-6 py-4 shrink-0">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-[#202224] border-b border-stone-800 px-4 sm:px-6 py-3 sm:py-4 shrink-0">
             <div className="flex items-center gap-3">
-              <Compass className="w-5 h-5 text-red-500 animate-spin-slow" />
+              <Compass className="w-5 h-5 text-red-500 animate-spin-slow shrink-0" />
               <div>
                 <h3 className="font-extrabold text-sm md:text-base text-white font-display">
                   Interactive Design Draft — {fmt(W)}′ × {fmt(H)}′
@@ -2279,10 +2289,17 @@ const gc = gateCenter();
                   Zoom: {Math.round(zoom * 100)}% | Use +/- keys to zoom, Esc to exit
                 </p>
               </div>
+              <button
+                onClick={() => setIsFullscreen(false)}
+                className="ml-auto sm:hidden p-2 bg-red-950/40 hover:bg-red-900/50 active:bg-red-900 text-red-400 rounded-lg transition-all shrink-0"
+                title="Close Fullscreen (Esc)"
+              >
+                <X className="w-4.5 h-4.5" />
+              </button>
             </div>
 
             {/* Modal Controls */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center flex-wrap gap-2">
               <button
                 onClick={() => setZoom((z) => Math.max(0.75, z - 0.25))}
                 className="p-2 bg-stone-800 hover:bg-stone-700 active:bg-stone-600 rounded-lg text-stone-300 transition-all"
@@ -2305,7 +2322,7 @@ const gc = gateCenter();
                 <RotateCcw className="w-3.5 h-3.5" />
                 Fit
               </button>
-              <div className="h-6 w-[1px] bg-stone-800 mx-1" />
+              <div className="h-6 w-[1px] bg-stone-800 mx-1 hidden sm:block" />
               <label className="flex items-center gap-2 cursor-pointer select-none px-1">
                 <span className="text-xs font-semibold text-stone-300">Vastu</span>
                 <button
@@ -2346,25 +2363,25 @@ const gc = gateCenter();
                 onClick={() => downloadSVG(svgFullscreenRef)}
                 className="px-3 py-2 bg-stone-850 border border-stone-700 text-stone-300 hover:bg-stone-800 rounded-lg text-xs font-semibold flex items-center gap-1"
               >
-                <Download className="w-3.5 h-3.5" /> SVG
+                <Download className="w-3.5 h-3.5" /> <span className="hidden sm:inline">SVG</span>
               </button>
               <button
                 onClick={() => downloadPNG(svgFullscreenRef)}
                 className="px-3 py-2 bg-stone-850 border border-stone-700 text-stone-300 hover:bg-stone-800 rounded-lg text-xs font-semibold flex items-center gap-1"
               >
-                <Download className="w-3.5 h-3.5" /> PNG
+                <Download className="w-3.5 h-3.5" /> <span className="hidden sm:inline">PNG</span>
               </button>
               <button
                 onClick={copyJSON}
                 className="px-3 py-2 bg-stone-850 border border-stone-700 text-stone-300 hover:bg-stone-800 rounded-lg text-xs font-semibold flex items-center gap-1"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <FileJson className="w-3.5 h-3.5" />}
-                Copy JSON
+                <span className="hidden sm:inline">Copy JSON</span>
               </button>
-              <div className="h-6 w-[1px] bg-stone-800 mx-1" />
+              <div className="h-6 w-[1px] bg-stone-800 mx-1 hidden sm:block" />
               <button
                 onClick={() => setIsFullscreen(false)}
-                className="p-2 bg-red-950/40 hover:bg-red-900/50 active:bg-red-900 text-red-400 rounded-lg transition-all"
+                className="hidden sm:block p-2 bg-red-950/40 hover:bg-red-900/50 active:bg-red-900 text-red-400 rounded-lg transition-all"
                 title="Close Fullscreen (Esc)"
               >
                 <X className="w-4.5 h-4.5" />
@@ -2373,7 +2390,7 @@ const gc = gateCenter();
           </div>
 
           {/* Modal Canvas (With Scrollbars & Dynamic Sizing!) */}
-          <div className="flex-1 overflow-auto p-8 bg-[#18191B] min-h-0 min-w-0 flex">
+          <div className="flex-1 overflow-auto p-3 sm:p-8 bg-[#18191B] min-h-0 min-w-0 flex">
             <div
               style={{
                 width: `${viewW * zoom}px`,

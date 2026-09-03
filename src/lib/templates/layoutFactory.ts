@@ -70,7 +70,7 @@ const r = (
  * Vastu: Kitchen SE, Bath NW, Bedroom SW where possible without moving living off the road.
  */
 const ONE_BHK_NORTH: TemplateRoom[] = [
-  // Road North (y=0). Living on north edge.
+  // Strict 1BHK tile. Road North (y=0). Living on north edge.
   r("bathroom-common", "Bathroom", 0, 0, 7, 20, 4, 6),
   r("living", "Living Room", 7, 0, 21, 20, 10, 12),
   r("bedroom-master", "Bedroom", 0, 20, 16, 16, 10, 12),
@@ -78,7 +78,7 @@ const ONE_BHK_NORTH: TemplateRoom[] = [
 ];
 
 const ONE_BHK_SOUTH: TemplateRoom[] = [
-  // Road South (y=max). Living on south edge so main door is at bottom of diagram.
+  // Strict 1BHK tile. Road South (y=max). Living on south edge so main door is at bottom of diagram.
   // Kitchen SE, Bath NW, Bedroom north of living.
   r("bathroom-common", "Bathroom", 0, 0, 7, 16, 4, 6),
   r("bedroom-master", "Bedroom", 7, 0, 21, 16, 10, 12),
@@ -87,19 +87,25 @@ const ONE_BHK_SOUTH: TemplateRoom[] = [
 ];
 
 const ONE_BHK_EAST: TemplateRoom[] = [
-  // Road East (x=max). Living on east edge so main door faces road (bottom after rotate).
-  r("bathroom-common", "Bathroom", 0, 0, 12, 10, 4, 6),
+  // Strict 1BHK tile: every shared edge lands on the same grid line.
+  // Road East (x=max). Living owns the north/east frontage; Kitchen stays SE.
+  // Row 1: Bathroom | Living
+  // Row 2: Bedroom  | Living
+  // Row 3: Bedroom  | Kitchen
+  r("bathroom-common", "Bathroom", 0, 0, 16, 10, 4, 6),
+  r("living", "Living Room", 16, 0, 12, 20, 10, 12),
   r("bedroom-master", "Bedroom", 0, 10, 16, 26, 10, 12),
-  r("kitchen", "Kitchen", 12, 0, 16, 14, 7, 8),
-  r("living", "Living Room", 16, 14, 12, 22, 10, 12),
+  r("kitchen", "Kitchen", 16, 20, 12, 16, 7, 8),
 ];
 
 const ONE_BHK_WEST: TemplateRoom[] = [
-  // Road West (x=0). Living on west edge so main door faces road (bottom after rotate).
-  r("living", "Living Room", 0, 0, 12, 22, 10, 12),
-  r("kitchen", "Kitchen", 12, 0, 16, 14, 7, 8),
-  r("bathroom-common", "Bathroom", 0, 22, 8, 14, 4, 6),
-  r("bedroom-master", "Bedroom", 8, 14, 20, 22, 10, 12),
+  // Strict 1BHK tile: no overlap and no unnamed internal gap.
+  // Road West (x=0). Living stays on the west frontage; Kitchen stays SE.
+  // The horizontal and vertical room boundaries are shared exactly.
+  r("living", "Living Room", 0, 0, 12, 14, 10, 12),
+  r("bathroom-common", "Bathroom", 12, 0, 16, 14, 4, 6),
+  r("bedroom-master", "Bedroom", 0, 14, 16, 22, 10, 12),
+  r("kitchen", "Kitchen", 16, 14, 12, 22, 7, 8),
 ];
 
 /*
@@ -112,10 +118,7 @@ const ONE_BHK_WEST: TemplateRoom[] = [
 const NORTH: Partial<Record<BhkLevel, TemplateRoom[]>> = {
   1: ONE_BHK_NORTH,
   2: [
-    // PDF 2BHK — Small 800 (20×40) & Compact 1050 (30×35), North road:
-    //   Bed2 9×10 NW | Living 12×14 NE | Common bath 4×6 NW
-    //   Dining 8×10 E | Kitchen 7–8×8–10 SE | Master 10–12×12–14 SW (+attached carved)
-    //   Parking outdoor north (generator). Pooja = niche only.
+    // Strict 2BHK tile: full 28×36 coverage, shared boundaries only.
     r("bedroom-2", "Bedroom 2", 0, 0, 10, 14, 9, 10),
     r("living", "Living Room", 10, 0, 18, 14, 12, 12),
     r("bathroom-common", "Bathroom", 0, 14, 6, 8, 4, 6),
@@ -124,51 +127,59 @@ const NORTH: Partial<Record<BhkLevel, TemplateRoom[]>> = {
     r("bedroom-master", "Master Bedroom", 0, 22, 16, 14, 10, 12),
   ],
   3: [
+    // Kitchen is kept in the south-east corner; attached bath is still carved
+    // from the master bedroom by generateFromTemplate.ts.
     r("bedroom-2", "Bedroom 2", 0, 0, 9, 12, 9, 10),
-    r("living", "Living Room", 9, 0, 13, 12, 12, 11),
-    r("bedroom-3", "Bedroom 3", 0, 12, 9, 8, 9, 8),
-    r("kitchen", "Kitchen", 19, 12, 9, 8, 7, 8),
-    r("bedroom-master", "Master Bedroom", 0, 20, 12, 16, 10, 12),
-    r("bathroom-common", "Bathroom", 12, 20, 6, 8, 4, 6),
+    r("living", "Living Room", 9, 0, 19, 12, 12, 11),
+    r("bedroom-3", "Bedroom 3", 0, 12, 10, 10, 9, 9),
+    r("bathroom-common", "Bathroom", 19, 12, 9, 10, 4, 6),
+    r("dining", "Dining", 10, 12, 10, 10, 6, 8),
+    r("bedroom-master", "Master Bedroom", 0, 22, 20, 14, 10, 12),
+    r("kitchen", "Kitchen", 20, 22, 8, 14, 7, 8),
   ],
   4: [
-    r("bedroom-2", "Bedroom 2", 0, 0, 8, 10, 8, 9),
-    r("living", "Living Room", 8, 0, 12, 10, 10, 9),
-    r("bedroom-4", "Bedroom 4", 24, 0, 4, 10, 4, 9),
-    r("bedroom-3", "Bedroom 3", 0, 10, 8, 10, 8, 9),
-    r("kitchen", "Kitchen", 18, 10, 10, 10, 7, 8),
-    r("bedroom-master", "Master Bedroom", 0, 20, 11, 16, 10, 12),
-    r("bathroom-common", "Bathroom", 11, 20, 5, 8, 4, 6),
+    // 4BHK based on the PDF room schedule: practical bedrooms, 8x10 kitchen,
+    // 10x12 dining, 14x14 master, and a modest fourth bedroom.
+    r("living", "Living Room", 0, 0, 14, 12, 14, 16),
+    r("bedroom-2", "Bedroom 2", 14, 0, 14, 12, 12, 12),
+    r("bedroom-3", "Bedroom 3", 0, 12, 14, 12, 12, 12),
+    r("bedroom-4", "Bedroom 4", 14, 12, 10, 12, 10, 10),
+    r("bathroom-common", "Bathroom", 24, 12, 4, 12, 5, 7),
+    r("bedroom-master", "Master Bedroom", 0, 24, 14, 12, 14, 14),
+    r("kitchen", "Kitchen", 14, 24, 8, 12, 8, 10),
+    r("dining", "Dining", 22, 24, 6, 12, 10, 12),
   ],
   5: [
-    r("bedroom-2", "Bedroom 2", 0, 0, 7, 9, 8, 8),
-    r("living", "Living Room", 7, 0, 11, 9, 10, 9),
-    r("bedroom-4", "Bedroom 4", 22, 0, 6, 9, 8, 8),
-    r("bedroom-3", "Bedroom 3", 0, 9, 7, 9, 8, 8),
-    r("kitchen", "Kitchen", 16, 9, 6, 9, 7, 8),
-    r("bedroom-5", "Bedroom 5", 22, 9, 6, 9, 8, 8),
-    r("bedroom-master", "Master Bedroom", 0, 18, 10, 18, 10, 12),
-    r("bathroom-common", "Bathroom", 20, 18, 8, 8, 4, 6),
+    // 5BHK: balanced rooms based on the PDF; no narrow vertical strips.
+    r("bedroom-2", "Bedroom 2", 0, 0, 9, 12, 12, 12),
+    r("living", "Living Room", 9, 0, 10, 12, 16, 18),
+    r("bedroom-4", "Bedroom 4", 19, 0, 9, 12, 10, 10),
+    r("bedroom-3", "Bedroom 3", 0, 12, 9, 12, 12, 14),
+    r("kitchen", "Kitchen", 9, 12, 10, 12, 10, 12),
+    r("bedroom-5", "Bedroom 5", 19, 12, 9, 12, 12, 14),
+    r("bedroom-master", "Master Bedroom", 0, 24, 14, 12, 14, 16),
+    r("dining", "Dining", 14, 24, 8, 12, 12, 14),
+    r("bathroom-common", "Bathroom", 22, 24, 6, 12, 5, 7),
   ],
   6: [
-    r("bedroom-2", "Bedroom 2", 0, 0, 7, 8, 8, 8),
-    r("living", "Living Room", 7, 0, 10, 8, 9, 8),
-    r("bedroom-4", "Bedroom 4", 21, 0, 7, 8, 8, 8),
-    r("bedroom-3", "Bedroom 3", 0, 8, 7, 8, 8, 8),
-    r("kitchen", "Kitchen", 16, 8, 5, 8, 7, 8),
-    r("bedroom-5", "Bedroom 5", 21, 8, 7, 8, 8, 8),
-    r("bedroom-master", "Master Bedroom", 0, 16, 10, 20, 10, 12),
-    r("bedroom-6", "Bedroom 6", 20, 16, 8, 10, 8, 8),
-    r("bathroom-common", "Bathroom", 20, 26, 5, 10, 4, 6),
-  ],
+    // 6BHK: balanced three-row grid; living is compact and does not have rooms beneath it.
+    r("bedroom-2", "Bedroom 2", 0, 0, 9, 12, 12, 12),
+    r("living", "Living Room", 9, 0, 10, 12, 14, 16),
+    r("bedroom-3", "Bedroom 3", 19, 0, 9, 12, 12, 12),
+    r("bedroom-4", "Bedroom 4", 0, 12, 9, 12, 10, 10),
+    r("kitchen", "Kitchen", 9, 12, 10, 12, 8, 10),
+    r("bedroom-5", "Bedroom 5", 19, 12, 9, 12, 10, 10),
+    r("bedroom-master", "Master Bedroom", 0, 24, 12, 12, 14, 16),
+    r("bathroom-common", "Bathroom", 12, 24, 4, 12, 5, 7),
+    r("bedroom-6", "Bedroom 6", 16, 24, 12, 12, 12, 12),
+  ]
 };
 
 const SOUTH: Partial<Record<BhkLevel, TemplateRoom[]>> = {
   // Road at South (y=max). Living on south (road) edge.
   1: ONE_BHK_SOUTH,
   2: [
-    // Road South (y=max). Living on south edge → main door at bottom of diagram.
-    // Bed2 NW, Bath N, Dining NE, Master W, Kitchen E, Living S.
+    // Strict 2BHK tile: full 28×36 coverage, living on the south road edge.
     r("bedroom-2", "Bedroom 2", 0, 0, 14, 14, 9, 10),
     r("bathroom-common", "Bathroom", 14, 0, 6, 14, 4, 6),
     r("dining", "Dining", 20, 0, 8, 14, 8, 8),
@@ -177,50 +188,55 @@ const SOUTH: Partial<Record<BhkLevel, TemplateRoom[]>> = {
     r("living", "Living Room", 0, 24, 28, 12, 12, 10),
   ],
   3: [
-    r("bedroom-2", "Bedroom 2", 0, 0, 9, 11, 9, 10),
-    r("bedroom-3", "Bedroom 3", 9, 0, 9, 11, 9, 9),
-    r("kitchen", "Kitchen", 18, 11, 10, 9, 7, 8),
-    r("bathroom-common", "Bathroom", 0, 11, 6, 9, 4, 6),
-    r("bedroom-master", "Master Bedroom", 0, 20, 12, 16, 10, 12),
-    r("living", "Living Room", 12, 28, 16, 8, 12, 8),
+    // Kitchen stays in the south-east zone; attached bath remains carved from master.
+    r("bedroom-2", "Bedroom 2", 0, 0, 14, 12, 9, 10),
+    r("bedroom-3", "Bedroom 3", 14, 0, 14, 12, 9, 9),
+    r("bathroom-common", "Bathroom", 0, 12, 6, 10, 4, 6),
+    r("bedroom-master", "Master Bedroom", 6, 12, 14, 10, 10, 9),
+    r("kitchen", "Kitchen", 20, 12, 8, 10, 7, 8),
+    r("living", "Living Room", 0, 22, 28, 14, 12, 10),
   ],
   4: [
-    r("bedroom-2", "Bedroom 2", 0, 0, 8, 10, 8, 9),
-    r("bedroom-3", "Bedroom 3", 8, 0, 8, 10, 8, 9),
-    r("bedroom-4", "Bedroom 4", 20, 0, 8, 10, 8, 9),
-    r("bathroom-common", "Bathroom", 16, 5, 4, 5, 4, 6),
-    r("kitchen", "Kitchen", 18, 10, 10, 10, 7, 8),
-    r("bedroom-master", "Master Bedroom", 0, 20, 12, 16, 10, 12),
-    r("living", "Living Room", 12, 20, 16, 16, 10, 10),
+    // South-facing 4BHK based on the PDF room schedule; living stays on south.
+    r("bedroom-2", "Bedroom 2", 0, 0, 10, 12, 12, 12),
+    r("bedroom-3", "Bedroom 3", 10, 0, 10, 12, 12, 12),
+    r("bedroom-4", "Bedroom 4", 20, 0, 8, 12, 10, 10),
+    r("bathroom-common", "Bathroom", 0, 12, 6, 12, 5, 7),
+    r("kitchen", "Kitchen", 6, 12, 8, 12, 8, 10),
+    r("dining", "Dining", 14, 12, 14, 12, 10, 12),
+    r("bedroom-master", "Master Bedroom", 0, 24, 14, 12, 14, 14),
+    r("living", "Living Room", 14, 24, 14, 12, 14, 16),
   ],
   5: [
-    r("bedroom-2", "Bedroom 2", 0, 0, 7, 9, 8, 8),
-    r("bedroom-3", "Bedroom 3", 7, 0, 7, 9, 8, 8),
-    r("bedroom-4", "Bedroom 4", 18, 0, 10, 9, 8, 8),
-    r("bathroom-common", "Bathroom", 14, 5, 4, 4, 4, 6),
-    r("kitchen", "Kitchen", 9, 9, 9, 9, 7, 8),
-    r("bedroom-5", "Bedroom 5", 18, 9, 10, 9, 8, 8),
-    r("bedroom-master", "Master Bedroom", 0, 18, 11, 18, 10, 12),
-    r("living", "Living Room", 21, 18, 7, 18, 7, 10),
+    // 5BHK: living remains on the south frontage; rooms use balanced widths.
+    r("bedroom-2", "Bedroom 2", 0, 0, 9, 12, 12, 12),
+    r("bedroom-3", "Bedroom 3", 9, 0, 10, 12, 12, 14),
+    r("bedroom-4", "Bedroom 4", 19, 0, 9, 12, 10, 10),
+    r("bedroom-5", "Bedroom 5", 0, 12, 9, 12, 12, 14),
+    r("kitchen", "Kitchen", 9, 12, 10, 12, 10, 12),
+    r("bathroom-common", "Bathroom", 19, 12, 9, 12, 5, 7),
+    r("bedroom-master", "Master Bedroom", 0, 24, 9, 12, 14, 16),
+    r("dining", "Dining", 9, 24, 9, 12, 12, 14),
+    r("living", "Living Room", 18, 24, 10, 12, 16, 18),
   ],
   6: [
-    r("bedroom-2", "Bedroom 2", 0, 0, 7, 8, 8, 7),
-    r("bedroom-3", "Bedroom 3", 7, 0, 7, 8, 8, 7),
-    r("bedroom-4", "Bedroom 4", 18, 0, 10, 8, 8, 7),
-    r("bathroom-common", "Bathroom", 14, 5, 4, 3, 4, 6),
-    r("kitchen", "Kitchen", 9, 8, 9, 8, 7, 8),
-    r("bedroom-5", "Bedroom 5", 18, 8, 10, 8, 8, 7),
-    r("bedroom-6", "Bedroom 6", 0, 16, 8, 8, 8, 7),
-    r("bedroom-master", "Master Bedroom", 8, 16, 12, 12, 10, 12),
-    r("living", "Living Room", 20, 22, 8, 14, 8, 10),
-  ],
+    // 6BHK: living is compact on the south/road edge; bathroom is not oversized.
+    r("bedroom-2", "Bedroom 2", 0, 0, 9, 12, 12, 12),
+    r("bedroom-3", "Bedroom 3", 9, 0, 10, 12, 12, 12),
+    r("bedroom-4", "Bedroom 4", 19, 0, 9, 12, 10, 10),
+    r("bedroom-5", "Bedroom 5", 0, 12, 9, 12, 10, 10),
+    r("kitchen", "Kitchen", 9, 12, 10, 12, 8, 10),
+    r("bathroom-common", "Bathroom", 19, 12, 4, 12, 5, 7),
+    r("bedroom-6", "Bedroom 6", 23, 12, 5, 12, 10, 10),
+    r("bedroom-master", "Master Bedroom", 0, 24, 12, 12, 14, 16),
+    r("living", "Living Room", 12, 24, 16, 12, 14, 16),
+  ]
 };
 
 const EAST: Partial<Record<BhkLevel, TemplateRoom[]>> = {
   1: ONE_BHK_EAST,
   2: [
-    // Road East (x=max). Living on east edge → main door faces road (bottom after rotate).
-    // Bed2 NW, Bath/Dining mid-west, Master SW, Kitchen mid, Living E.
+    // Strict 2BHK tile: full 28×36 coverage, living on the east road edge.
     r("bedroom-2", "Bedroom 2", 0, 0, 16, 14, 9, 10),
     r("dining", "Dining", 16, 0, 12, 8, 8, 8),
     r("bathroom-common", "Bathroom", 0, 14, 6, 8, 4, 6),
@@ -229,50 +245,57 @@ const EAST: Partial<Record<BhkLevel, TemplateRoom[]>> = {
     r("living", "Living Room", 16, 8, 12, 28, 10, 12),
   ],
   3: [
-    r("bedroom-2", "Bedroom 2", 0, 0, 9, 12, 9, 10),
-    r("bedroom-3", "Bedroom 3", 9, 0, 9, 12, 9, 9),
-    r("living", "Living Room", 18, 6, 10, 14, 8, 10),
-    r("kitchen", "Kitchen", 10, 12, 8, 8, 7, 8),
-    r("bathroom-common", "Bathroom", 0, 20, 5, 16, 4, 6),
-    r("bedroom-master", "Master Bedroom", 5, 20, 13, 16, 10, 12),
+    // Kitchen is moved to the south-east corner; attached bath is still carved from master.
+    r("bedroom-2", "Bedroom 2", 0, 0, 10, 12, 9, 10),
+    r("bedroom-3", "Bedroom 3", 10, 0, 10, 12, 9, 9),
+    r("living", "Living Room", 20, 0, 8, 22, 8, 10),
+    r("bathroom-common", "Bathroom", 0, 12, 6, 10, 4, 6),
+    r("dining", "Dining", 6, 12, 14, 10, 6, 8),
+    r("bedroom-master", "Master Bedroom", 0, 22, 20, 14, 10, 12),
+    r("kitchen", "Kitchen", 20, 22, 8, 14, 7, 8),
   ],
   4: [
-    r("bedroom-2", "Bedroom 2", 0, 0, 8, 10, 8, 9),
-    r("bedroom-3", "Bedroom 3", 8, 0, 8, 10, 8, 9),
-    r("bedroom-4", "Bedroom 4", 20, 0, 8, 10, 8, 9),
-    r("kitchen", "Kitchen", 10, 10, 10, 10, 7, 8),
-    r("living", "Living Room", 20, 10, 8, 18, 8, 10),
-    r("bedroom-master", "Master Bedroom", 0, 20, 12, 16, 10, 12),
-    r("bathroom-common", "Bathroom", 12, 20, 5, 8, 4, 6),
+    // East-facing 4BHK: living is a compact east-side room, not a full-height strip.
+    // East-facing 4BHK: swap Bedroom 2 and Kitchen footprints only.
+    r("bedroom-2", "Bedroom 2", 0, 0, 10, 12, 12, 12),
+    r("bathroom-common", "Bathroom", 10, 0, 10, 8, 5, 7),
+    r("living", "Living Room", 20, 0, 8, 18, 14, 16),
+    r("bedroom-3", "Bedroom 3", 0, 12, 10, 12, 12, 12),
+    r("kitchen", "Kitchen", 10, 8, 10, 10, 8, 10),
+    r("bedroom-4", "Bedroom 4", 20, 18, 8, 18, 10, 10),
+    r("bedroom-master", "Master Bedroom", 0, 24, 14, 12, 14, 14),
+    r("dining", "Dining", 14, 24, 6, 12, 10, 12),
   ],
   5: [
-    r("bedroom-2", "Bedroom 2", 0, 0, 7, 9, 8, 8),
-    r("bedroom-3", "Bedroom 3", 7, 0, 7, 9, 8, 8),
-    r("bedroom-4", "Bedroom 4", 18, 0, 10, 9, 8, 8),
-    r("kitchen", "Kitchen", 9, 9, 9, 9, 7, 8),
-    r("bedroom-5", "Bedroom 5", 18, 9, 10, 9, 8, 8),
-    r("bedroom-master", "Master Bedroom", 0, 18, 11, 18, 10, 12),
-    r("bathroom-common", "Bathroom", 16, 18, 5, 8, 4, 6),
-    r("living", "Living Room", 21, 18, 7, 18, 7, 10),
+    // 5BHK: compact east-side living frontage, with balanced room blocks.
+    r("bedroom-2", "Bedroom 2", 0, 0, 9, 12, 12, 12),
+    r("bedroom-3", "Bedroom 3", 9, 0, 10, 12, 12, 14),
+    r("living", "Living Room", 19, 0, 9, 12, 16, 18),
+    r("bedroom-4", "Bedroom 4", 0, 12, 9, 12, 10, 10),
+    r("kitchen", "Kitchen", 9, 12, 10, 12, 10, 12),
+    r("bedroom-5", "Bedroom 5", 19, 12, 9, 12, 12, 14),
+    r("bedroom-master", "Master Bedroom", 0, 24, 14, 12, 14, 16),
+    r("dining", "Dining", 14, 24, 8, 12, 12, 14),
+    r("bathroom-common", "Bathroom", 22, 24, 6, 12, 5, 7),
   ],
   6: [
-    r("bedroom-2", "Bedroom 2", 0, 0, 7, 8, 8, 7),
-    r("bedroom-3", "Bedroom 3", 7, 0, 7, 8, 8, 7),
-    r("bedroom-4", "Bedroom 4", 18, 0, 10, 8, 8, 7),
-    r("kitchen", "Kitchen", 9, 8, 9, 8, 7, 8),
-    r("bedroom-5", "Bedroom 5", 18, 8, 10, 8, 8, 7),
-    r("bedroom-6", "Bedroom 6", 0, 16, 8, 8, 8, 7),
-    r("bedroom-master", "Master Bedroom", 8, 16, 12, 12, 10, 12),
-    r("bathroom-common", "Bathroom", 20, 16, 4, 6, 4, 6),
-    r("living", "Living Room", 20, 22, 8, 14, 8, 10),
-  ],
-};
+    // 6BHK East-facing: living room is on the bottom/front side.
+    // Upper rows remain available for bedrooms, kitchen, Pooja and Store.
+    r("bedroom-2", "Bedroom 2", 0, 0, 8, 12, 12, 12),
+    r("bedroom-3", "Bedroom 3", 8, 0, 8, 12, 12, 12),
+    r("bedroom-4", "Bedroom 4", 16, 0, 8, 12, 10, 10),
+    r("bathroom-common", "Bathroom", 24, 0, 4, 12, 4, 6),
+    r("bedroom-5", "Bedroom 5", 0, 12, 8, 12, 10, 10),
+    r("kitchen", "Kitchen", 8, 12, 8, 12, 8, 10),
+    r("bedroom-6", "Bedroom 6", 16, 12, 12, 12, 10, 10),
+    r("bedroom-master", "Master Bedroom", 0, 24, 12, 12, 12, 14),
+    r("living", "Living Room", 12, 24, 16, 12, 14, 16),
+  ]};
 
 const WEST: Partial<Record<BhkLevel, TemplateRoom[]>> = {
   1: ONE_BHK_WEST,
   2: [
-    // Road West (x=0). Living on west edge → main door faces road (bottom after rotate).
-    // Living W, Bed2 NE, Bath/Dining mid-east, Master SW, Kitchen SE.
+    // Strict 2BHK tile: full 28×36 coverage, living on the west road edge.
     r("living", "Living Room", 0, 0, 14, 20, 10, 12),
     r("bedroom-2", "Bedroom 2", 14, 0, 14, 12, 9, 10),
     r("bathroom-common", "Bathroom", 14, 12, 6, 8, 4, 6),
@@ -281,43 +304,50 @@ const WEST: Partial<Record<BhkLevel, TemplateRoom[]>> = {
     r("kitchen", "Kitchen", 14, 20, 14, 16, 7, 8),
   ],
   3: [
-    r("living", "Living Room", 0, 0, 12, 16, 10, 10),
-    r("bedroom-2", "Bedroom 2", 12, 0, 10, 10, 9, 10),
-    r("kitchen", "Kitchen", 20, 16, 8, 8, 7, 8),
-    r("bedroom-3", "Bedroom 3", 12, 16, 8, 8, 8, 8),
-    r("bedroom-master", "Master Bedroom", 0, 24, 14, 12, 10, 12),
-    r("bathroom-common", "Bathroom", 14, 24, 6, 12, 4, 6),
+    // Kitchen is moved to the south-east corner; attached bath is still carved from master.
+    r("living", "Living Room", 0, 0, 10, 22, 10, 10),
+    r("bedroom-2", "Bedroom 2", 10, 0, 9, 12, 9, 10),
+    r("bedroom-3", "Bedroom 3", 19, 0, 9, 12, 9, 9),
+    r("bathroom-common", "Bathroom", 10, 12, 6, 10, 4, 6),
+    r("dining", "Dining", 16, 12, 12, 10, 6, 8),
+    r("bedroom-master", "Master Bedroom", 0, 22, 20, 14, 10, 12),
+    r("kitchen", "Kitchen", 20, 22, 8, 14, 7, 8),
   ],
   4: [
-    r("living", "Living Room", 0, 0, 12, 16, 10, 10),
-    r("bedroom-2", "Bedroom 2", 12, 0, 10, 10, 8, 9),
-    r("kitchen", "Kitchen", 20, 16, 8, 8, 7, 8),
-    r("bedroom-3", "Bedroom 3", 12, 16, 8, 8, 8, 8),
-    r("bedroom-master", "Master Bedroom", 0, 24, 12, 12, 10, 12),
-    r("bathroom-common", "Bathroom", 12, 24, 6, 12, 4, 6),
-    r("bedroom-4", "Bedroom 4", 18, 24, 10, 12, 8, 9),
+    // West-facing 4BHK: living is a compact west-side room, not a full-height strip.
+    r("living", "Living Room", 0, 0, 8, 18, 14, 16),
+    r("bedroom-2", "Bedroom 2", 8, 0, 10, 12, 12, 12),
+    r("bathroom-common", "Bathroom", 18, 0, 10, 8, 5, 7),
+    r("bedroom-3", "Bedroom 3", 8, 12, 10, 12, 12, 12),
+    r("kitchen", "Kitchen", 18, 8, 10, 10, 8, 10),
+    r("bedroom-4", "Bedroom 4", 0, 18, 8, 18, 10, 10),
+    r("bedroom-master", "Master Bedroom", 8, 24, 14, 12, 14, 14),
+    r("dining", "Dining", 22, 24, 6, 12, 10, 12),
   ],
   5: [
-    r("living", "Living Room", 0, 0, 12, 12, 10, 10),
-    r("bedroom-5", "Bedroom 5", 0, 12, 12, 4, 8, 8),
-    r("bedroom-2", "Bedroom 2", 12, 0, 10, 10, 8, 9),
-    r("kitchen", "Kitchen", 20, 16, 8, 8, 7, 8),
-    r("bedroom-3", "Bedroom 3", 12, 16, 8, 8, 8, 8),
-    r("bedroom-master", "Master Bedroom", 0, 24, 12, 12, 10, 12),
-    r("bathroom-common", "Bathroom", 12, 24, 6, 12, 4, 6),
-    r("bedroom-4", "Bedroom 4", 18, 24, 10, 12, 8, 9),
+    // 5BHK: compact west-side living frontage, with balanced room blocks.
+    r("living", "Living Room", 0, 0, 9, 12, 16, 18),
+    r("bedroom-2", "Bedroom 2", 9, 0, 10, 12, 12, 12),
+    r("bedroom-3", "Bedroom 3", 19, 0, 9, 12, 12, 14),
+    r("bedroom-4", "Bedroom 4", 0, 12, 9, 12, 10, 10),
+    r("kitchen", "Kitchen", 9, 12, 10, 12, 10, 12),
+    r("bedroom-5", "Bedroom 5", 19, 12, 9, 12, 12, 14),
+    r("dining", "Dining", 0, 24, 8, 12, 12, 14),
+    r("bedroom-master", "Master Bedroom", 8, 24, 14, 12, 14, 16),
+    r("bathroom-common", "Bathroom", 22, 24, 6, 12, 5, 7),
   ],
   6: [
-    r("living", "Living Room", 0, 0, 12, 10, 9, 9),
-    r("bedroom-5", "Bedroom 5", 0, 10, 12, 4, 8, 7),
-    r("bedroom-6", "Bedroom 6", 0, 14, 12, 4, 8, 7),
-    r("bedroom-2", "Bedroom 2", 12, 0, 10, 10, 8, 8),
-    r("kitchen", "Kitchen", 20, 16, 8, 8, 7, 8),
-    r("bedroom-3", "Bedroom 3", 12, 16, 8, 8, 8, 7),
-    r("bedroom-master", "Master Bedroom", 0, 24, 12, 12, 10, 12),
-    r("bathroom-common", "Bathroom", 12, 24, 6, 12, 4, 6),
-    r("bedroom-4", "Bedroom 4", 18, 24, 10, 12, 8, 8),
-  ],
+    // 6BHK: compact west-side living room; no bedrooms are placed below it.
+    r("bedroom-2", "Bedroom 2", 0, 0, 9, 12, 12, 12),
+    r("bedroom-3", "Bedroom 3", 9, 0, 10, 12, 12, 12),
+    r("bedroom-4", "Bedroom 4", 19, 0, 9, 12, 10, 10),
+    r("living", "Living Room", 0, 12, 9, 12, 14, 16),
+    r("kitchen", "Kitchen", 9, 12, 10, 12, 8, 10),
+    r("bedroom-5", "Bedroom 5", 19, 12, 9, 12, 10, 10),
+    r("bedroom-master", "Master Bedroom", 0, 24, 12, 12, 14, 16),
+    r("bathroom-common", "Bathroom", 12, 24, 4, 12, 5, 7),
+    r("bedroom-6", "Bedroom 6", 16, 24, 12, 12, 12, 12),
+  ]
 };
 
 export function makeTemplate(
